@@ -14,25 +14,25 @@ class RttrConan(ConanFile):
     generators = "cmake"
     requires = "boost_chrono/1.66.0@bincrafters/testing","boost_system/1.66.0@bincrafters/testing"
     exports_sources = "CMakeLists.txt"
-    exports = ["README.md"]
+    exports = "README.md"
     
     sha256 = "caa8d404840b0e156f869a947e475b09f7b602ab53c290271f40ce028c8d7d91"
 
 
-    
     def source(self):
         tools.get("http://www.rttr.org/releases/rttr-%s-src.tar.gz"
                   % self.version, sha256=self.sha256)
+        sf = os.path.join(self.source_folder,"rttr-%s-src" % self.version)
+        os.rename(sf,"source_subfolder")
         
     def build(self):
         cmake = CMake(self)
-        sf = os.path.join(self.source_folder,"rttr-%s-src" % self.version)
-
         cmake.definitions["BUILD_BENCHMARKS"] = "OFF"
         cmake.definitions["BUILD_WITH_RTTI"] = "ON" if self.options.rtti else "OFF"
 
-        cmake.configure(source_folder=sf)
+        cmake.configure()
         cmake.build()
+        cmake.install()
 
     def package(self):
         self.copy("*.h", dst="include", src="hello")
