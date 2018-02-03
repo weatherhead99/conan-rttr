@@ -1,0 +1,83 @@
+Index: rttr-0.9.5-src/CMakeLists.txt
+===================================================================
+--- rttr-0.9.5-src.orig/CMakeLists.txt
++++ rttr-0.9.5-src/CMakeLists.txt
+@@ -35,6 +35,9 @@ cmake_minimum_required (VERSION 2.8.12)
+ 
+ project ("rttr")
+ 
++include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
++conan_basic_setup()
++
+ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+     
+ if (CMAKE_BUILD_TYPE STREQUAL "")
+@@ -73,7 +76,9 @@ include(installer)
+ # here we add our source code
+ add_subdirectory(src) 
+ # and the documentation
+-add_subdirectory(doc) 
++#no need for docs in conan build
++#add_subdirectory(doc) 
+ 
+ # here we specify the installation directory
+-set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
++# NO - please DON'T!!
++#set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
+Index: rttr-0.9.5-src/CMake/config.cmake
+===================================================================
+--- rttr-0.9.5-src.orig/CMake/config.cmake
++++ rttr-0.9.5-src/CMake/config.cmake
+@@ -40,9 +40,10 @@ set(README_FILE "${CMAKE_SOURCE_DIR}/REA
+ set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
+ 
+ # dirs where the binaries should be placed, installed
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+-set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
++#NOPE
++#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
++#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
++#set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+ set(RTTR_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
+ 
+ #3rd part dependencies dirs
+Index: rttr-0.9.5-src/src/rttr/CMakeLists.txt
+===================================================================
+--- rttr-0.9.5-src.orig/src/rttr/CMakeLists.txt
++++ rttr-0.9.5-src/src/rttr/CMakeLists.txt
+@@ -39,18 +39,25 @@ if (USE_PCH)
+     activate_precompiled_headers("detail/base/pch.h" SRC_FILES)
+ endif()
+ 
++
+ add_library(rttr_core SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
+ 
+-install(TARGETS rttr_core EXPORT rttr_targets
+-        RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
+-        LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
+-        ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
+-        
++#conan patch - shared library still needed to run unit tests,
++#but don't install it in the export set if we're doing a
++#static build
++
++if(BUILD_SHARED_LIBS)
++  install(TARGETS rttr_core EXPORT rttr_targets
++    RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
++    LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
++    ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
++endif()
++
+ install(EXPORT rttr_targets
+-        DESTINATION cmake
+-        NAMESPACE RTTR::
+-        FILE rttr-config.cmake)
+-        
++  DESTINATION cmake
++  NAMESPACE RTTR::
++  FILE rttr-config.cmake)
++
+ target_include_directories(rttr_core PUBLIC
+   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
