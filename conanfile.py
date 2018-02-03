@@ -40,6 +40,9 @@ class RttrConan(ConanFile):
 
         
     def package_info(self):
-        self.cpp_info.libs = ["rttr_core"]
+        if self.settings.build_type == "Debug":
+            self.cpp_info.libs = ["rttr_core_d"]
+        else:
+            self.cpp_info.libs = ["rttr_core"]
 
 
