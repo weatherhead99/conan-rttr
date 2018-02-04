@@ -6,8 +6,8 @@ class RttrConan(ConanFile):
     name = "rttr"
     version = "0.9.5"
     license = "MIT"
-    url = "<Package recipe repository url here, for issues about the package>"
-    description = "<Description of Rttr here>"
+    url = "https://github.com/weatherhead99/conan-rttr"
+    description = "An open source library, which adds (dynamic) reflection to C++"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False],
                "rtti": [True, False]}
