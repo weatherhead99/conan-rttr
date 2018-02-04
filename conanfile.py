@@ -44,8 +44,7 @@ class RttrConan(ConanFile):
 
     def package_info(self):
         suffix = "_d" if self.settings.build_type == "Debug" else ""
-        prefix = "lib" if self.settings.os == "Windows" else ""
-
+        prefix = "lib" if self.settings.os == "Windows" and not self.options.shared else ""
         self.cpp_info.libs = ["%srttr_core%s" % (prefix, suffix)]
 
 
