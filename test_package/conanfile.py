@@ -26,10 +26,11 @@ class TestPackageConan(ConanFile):
 
     def test(self):
         with tools.environment_append(RunEnvironment(self).vars):
-            self.output.info("testing that rttr used via find_package works...")
             bin_path = os.path.join("bin", "test_package")
-            run_test(self, bin_path, "")
+            if self.settings.os == "Windows":
+                self.run(bin_path)
+            elif self.settings.os == "Macos":
+                self.run("DYLD_LIBRARY_PATH=%s %s" % (os.environ.get('DYLD_LIBRARY_PATH', ''), bin_path))
+            else:
+                self.run("LD_LIBRARY_PATH=%s %s" % (os.environ.get('LD_LIBRARY_PATH', ''), bin_path))
 
-            self.output.info("testing that rttr used via conan mechanism works...")
-            bin_path = os.path.join("bin", "test_package_2")
-            run_test(self, bin_path, "")
