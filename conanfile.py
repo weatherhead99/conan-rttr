@@ -17,6 +17,10 @@ class RttrConan(ConanFile):
     exports_sources = "LICENSE.txt", "conan_build.patch"
     sha256 = "caa8d404840b0e156f869a947e475b09f7b602ab53c290271f40ce028c8d7d91"
 
+    def config_options(self):
+        comp = self.settings.compiler
+        if comp == "clang" or comp == "apple-clang":
+            self.output.error("clang not supported for this version")
 
     def source(self):
         tools.get("http://www.rttr.org/releases/rttr-%s-src.tar.gz"
