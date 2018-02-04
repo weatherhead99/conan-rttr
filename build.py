@@ -16,6 +16,6 @@ if __name__ == "__main__":
 
     builder = build_template_default.get_builder()
 
-    filter(valid_compiler, builder.builds)
+    filter(valid_compiler, builder.items)
 
     builder.run()
