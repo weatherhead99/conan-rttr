@@ -2,7 +2,7 @@
 
 | Bintray | Appveyor | Travis |
 |---------|-----------|--------|
-|BINTRAY_BADGE_URL|APPVEYOR_BADGE_URL|TRAVIS_BADGE_URL|
+|[![Download](https://api.bintray.com/packages/weatherhead99/conan_packages/rttr%3Aweatherhead99/images/download.svg)](https://bintray.com/weatherhead99/conan_packages/rttr%3Aweatherhead99/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/github/weatherhead99/conan-rttr?svg=true)](https://ci.appveyor.com/project/weatherhead99/conan-rttr)|[![Build Status](https://travis-ci.org/weatherhead99/conan-rttr.svg)](https://travis-ci.org/weatherhead99/conan-rttr)|
 
 ## Conan.io Information
 
