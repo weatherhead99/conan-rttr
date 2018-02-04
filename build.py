@@ -12,10 +12,12 @@ def valid_compiler(build):
     return True
 
 def valid_runtime(build):
-    os = build.settings["os"]
-    runtime = build.settings["compiler.runtime"]
+    try:
+        runtime = build.settings["compiler.runtime"]
+    except Exception:
+        return True
 
-    if os == "Windows" and runtime == "MD":
+    if  runtime == "MD":
         return False
 
     return True
