@@ -26,8 +26,8 @@ class RttrConan(ConanFile):
                "rtti": [True, False]}
     default_options = "shared=False", "rtti=True"
     generators = "cmake"
-    exports = "README.md", "rttr_use_cxx11.patch"
-    exports_sources = "LICENSE.txt", "rttr_use_cxx11.patch"
+    exports = "rttr_use_cxx11.patch"
+    exports_sources =  "rttr_use_cxx11.patch"
     sha256 = "f62caee43016489320f8a69145c9208cddd72e451ea95618bc26a49a4cd6c990"
 
     def config_options(self):
