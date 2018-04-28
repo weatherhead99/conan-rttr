@@ -32,10 +32,6 @@ class RttrConan(ConanFile):
 
     def config_options(self):
         comp = self.settings.compiler
-        if comp == "clang" or comp == "apple-clang":
-            self.output.error("clang not supported for this version")
-            del self.settings.compiler
-
         runos = self.settings.os
         if runos == "Windows" and self.settings.compiler.runtime == "MD":
             self.output.error("MD runtime not supported for this version")
