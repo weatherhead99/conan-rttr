@@ -17,16 +17,18 @@ class RttrConan(ConanFile):
     exports_sources = "rttr_use_cxx11.patch"
     sha256 = "f62caee43016489320f8a69145c9208cddd72e451ea95618bc26a49a4cd6c990"
 
-    def config_options(self):
-        runos = self.settings.os
-        if runos == "Windows" and self.settings.compiler.runtime == "MD":
-            self.output.error("MD runtime not supported for this version")
-            del self.settings.compiler.runtime
-
     def source(self):
         tools.get("http://www.rttr.org/releases/rttr-%s-src.tar.gz"
                   % self.version, sha256=self.sha256)
         tools.patch(patch_file="rttr_use_cxx11.patch")
+
+    def patch_cmake_config_windows(self, cmake, file_to_patch):
+        prefix = cmake.definitions.get("CMAKE_INSTALL_PREFIX")
+        pdrive, ppath = os.path.splitdrive(prefix)
+        cmakefilepath = pdrive.upper() + ppath.replace(os.path.sep,"/")
+        self.output.info("replace string: %s" % cmakefilepath)
+        replstr = "${CONAN_%s_ROOT}" % self.name.upper()
+        tools.replace_in_file(file_to_patch, cmakefilepath, replstr, strict=True)
 
     def get_patched_libpath(self, build_folder):
         libfolder = os.path.join(build_folder, "lib")
@@ -39,6 +41,7 @@ class RttrConan(ConanFile):
             newval = libfolder
 
         return varname, newval
+
 
     def build(self):
         cmake = CMake(self)
@@ -67,6 +70,13 @@ class RttrConan(ConanFile):
         with tools.environment_append({varname : varvalue}):
             cmake.build()
             cmake.install()
+            if self.settings.os == "Windows":
+                self.output.info("patching absolute paths out of cmake config files...")
+                cmake_dir = os.path.join(self.package_folder,"cmake")
+                config_file = os.path.join(cmake_dir,"rttr-config.cmake")
+                if not os.path.exists(config_file):
+                    self.output.error("can't find cmake file!")
+                self.patch_cmake_config_windows(cmake,config_file)
 
     def package(self):
         pass
