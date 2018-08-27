@@ -1,0 +1,15 @@
+Index: rttr-0.9.6/CMakeLists.txt
+===================================================================
+--- rttr-0.9.6.orig/CMakeLists.txt
++++ rttr-0.9.6/CMakeLists.txt
+@@ -35,6 +35,10 @@ cmake_minimum_required (VERSION 3.0)
+ 
+ project ("rttr" LANGUAGES CXX)
+ 
++#use the conan file
++include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
++conan_basic_setup()
++
+ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+ 
+ if (CMAKE_BUILD_TYPE STREQUAL "")

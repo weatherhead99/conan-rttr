@@ -13,14 +13,16 @@ class RttrConan(ConanFile):
                "rtti": [True, False]}
     default_options = "shared=False", "rtti=True"
     generators = "cmake"
-    exports = "rttr_use_cxx11.patch"
-    exports_sources = "rttr_use_cxx11.patch"
+    exports = "conan_cmake_integration.patch"
+    exports_sources = "conan_cmake_integration.patch"
     sha256 = "f62caee43016489320f8a69145c9208cddd72e451ea95618bc26a49a4cd6c990"
 
     def source(self):
         tools.get("http://www.rttr.org/releases/rttr-%s-src.tar.gz"
                   % self.version, sha256=self.sha256)
-        tools.patch(patch_file="rttr_use_cxx11.patch")
+
+        tools.patch(patch_file="conan_cmake_integration.patch")
+        
 
     def patch_cmake_config_windows(self, cmake, file_to_patch):
         prefix = cmake.definitions.get("CMAKE_INSTALL_PREFIX")
