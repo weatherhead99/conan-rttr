@@ -39,14 +39,8 @@ class RttrConan(ConanFile):
             curval = os.environ[varname]
             newval = "%s;%s" % (curval, libfolder)
         elif self.settings.os == "Macos":
-            varname = "DYLD_LIBRARY_PATH"
-            try:
-                curval = os.environ[varname]
-                newval = ".:%s:%s" % (curval,libfolder)
-            except KeyError:
-                #didn't already have a value
-                newval = ".:%s" % libfolder
-
+            varname = "DYLD_FALLBACK_LIBRARY_PATH"
+            newval = ".:%s" % libfolder
         else:
             varname = "LD_LIBRARY_PATH"
             newval = libfolder
