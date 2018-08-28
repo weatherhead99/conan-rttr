@@ -96,5 +96,5 @@ class RttrConan(ConanFile):
            and self.settings.compiler == "gcc" \
            and not self.options.shared \
            and self.settings.compiler.libcxx == "libstdc++":
-            self.output.info("adding -ldl compiler flag")
-            self.cpp_info.cppflags.append("-ldl")
+            self.output.info("adding -ldl linkage")
+            self.cpp_info.libs.append("-ldl")
