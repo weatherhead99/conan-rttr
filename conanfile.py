@@ -47,7 +47,9 @@ class RttrConan(ConanFile):
 
         return varname, newval
 
-
+    def compiler_version_major(self):
+        return int(str(self.settings.compiler.version).split(".")[0])
+    
     def build(self):
         cmake = CMake(self)
         cmake.definitions["BUILD_BENCHMARKS"] = "OFF"
@@ -55,6 +57,16 @@ class RttrConan(ConanFile):
         cmake.definitions["BUILD_EXAMPLES"] = "OFF"
         cmake.definitions["BUILD_WITH_RTTI"] = "ON" if self.options.rtti else "OFF"
 
+        if self.settings.os == "Linux" and self.settings.compiler == "gcc" \
+           and self.compiler_version_major() < 5 :
+            self.output.info("gcc < 5, setting cxx11 standard")
+            cmake.definitions["CMAKE_CXX_STANDARD"] = "11"
+
+        if self.settings.os == "Macos" \
+           and self.compiler_version_major() < 9 :
+            self.output.info("appleclang <9, setting cxx11 standard")
+            cmake.definitions["CMAKE_CXX_STANDARD"] = "11"
+        
         if self.options.shared:
             cmake.definitions["BUILD_RTTR_DYNAMIC"] = "ON"
             cmake.definitions["BUILD_UNIT_TESTS"] = "ON"
