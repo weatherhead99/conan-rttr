@@ -90,3 +90,11 @@ class RttrConan(ConanFile):
 
         #add lib64 folder, for 64 bit platforms GNUInstalldirs will put libraries here
         self.cpp_info.libdirs.append("lib64")
+
+        #fix missing -ldl needed on old ABI gcc-7
+        if self.settings.os == "Linux" \
+           and self.settings.compiler == "gcc" \
+           and not self.options.shared \
+           and self.settings.compiler.libcxx == "libstdc++":
+            self.output.info("adding -ldl compiler flag")
+            self.cpp_info.cppflags.append("-ldl")
