@@ -52,6 +52,10 @@ class RttrConan(ConanFile):
         cmake.definitions["BUILD_EXAMPLES"] = "OFF"
         cmake.definitions["BUILD_WITH_RTTI"] = "ON" if self.options.rtti else "OFF"
 
+        if self.settings.os == "Linux" and not self.options.shared:
+            #fix missing -ldl on some platforms
+            cmake.definitions["CONAN_SHARED_LINKER_FLAGS"] += " -ldl"
+        
         if self.options.shared:
             cmake.definitions["BUILD_RTTR_DYNAMIC"] = "ON"
             cmake.definitions["BUILD_UNIT_TESTS"] = "ON"
@@ -84,6 +88,8 @@ class RttrConan(ConanFile):
         pass
 
     def package_info(self):
+        self.output.warn("called package_info")
+        
         suffix = "_d" if self.settings.build_type == "Debug" else ""
         prefix = "lib" if self.settings.os == "Windows" and not self.options.shared else ""
         self.cpp_info.libs = ["%srttr_core%s" % (prefix, suffix)]
@@ -100,3 +106,5 @@ class RttrConan(ConanFile):
             self.cpp_info.cppflags = ["-ldl"]
             self.cpp_info.sharedlinkflags = ["-ldl"]
             self.cpp_info.exelinkflags =["-ldl"]
+
+            self.output.warn("cppflags: %s" % self.cpp_info.cppflags)
