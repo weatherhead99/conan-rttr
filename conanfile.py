@@ -40,8 +40,13 @@ class RttrConan(ConanFile):
             newval = "%s;%s" % (curval, libfolder)
         elif self.settings.os == "Macos":
             varname = "DYLD_LIBRARY_PATH"
-            curval = os.environ[varname]
-            newval = "%s:%s:." % (curval,libfolder)
+            try:
+                curval = os.environ[varname]
+                newval = ".:%s:%s" % (curval,libfolder)
+            except KeyError:
+                #didn't already have a value
+                newval = ".:%s" % libfolder
+
         else:
             varname = "LD_LIBRARY_PATH"
             newval = libfolder
@@ -57,6 +62,7 @@ class RttrConan(ConanFile):
         cmake.definitions["BUILD_DOCUMENTATION"] = "OFF"
         cmake.definitions["BUILD_EXAMPLES"] = "OFF"
         cmake.definitions["BUILD_WITH_RTTI"] = "ON" if self.options.rtti else "OFF"
+        cmake.definitions["BUILD_PACKAGE"] = "OFF"
 
         if self.settings.os == "Linux" and self.settings.compiler == "gcc" \
            and self.compiler_version_major() < 5 :
