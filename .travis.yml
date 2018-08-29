@@ -1,3 +1,12 @@
+env:
+  global:
+    - CONAN_USERNAME: "weatherhead99"
+    - CONAN_LOGIN_USERNAME: "weatherhead99"
+    - CONAN_CHANNEL: "testing"
+    - CONAN_UPLOAD: "https://api.bintray.com/conan/weatherhead99/conan_packages"
+    - CONAN_UPLOAD_ONLY_WHEN_STABLE: 0
+    - CONAN_STABLE_BRANCH_PATTERN: "v0.9.6"
+    
 linux: &linux
    os: linux
    sudo: required
