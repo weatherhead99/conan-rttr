@@ -10,8 +10,9 @@ class RttrConan(ConanFile):
     description = "An open source library, which adds (dynamic) reflection to C++"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False],
-               "rtti": [True, False]}
-    default_options = "shared=False", "rtti=True"
+               "rtti": [True, False],
+               "unit_tests" : [True,False]}
+    default_options = "shared=False", "rtti=True", "unit_tests=False"
     generators = "cmake"
     exports = "conan_cmake_integration.patch"
     exports_sources = "conan_cmake_integration.patch"
@@ -57,6 +58,10 @@ class RttrConan(ConanFile):
         cmake.definitions["BUILD_EXAMPLES"] = "OFF"
         cmake.definitions["BUILD_WITH_RTTI"] = "ON" if self.options.rtti else "OFF"
         cmake.definitions["BUILD_PACKAGE"] = "OFF"
+        if self.options.unit_tests:
+            cmake.definitions["BUILD_UNIT_TESTS"] = "ON"
+        else:
+            cmake.definitions["BUILD_UNIT_TESTS"] = "OFF"
 
         if self.settings.os == "Linux" and self.settings.compiler == "gcc" \
            and self.compiler_version_major() < 5 :
@@ -70,14 +75,9 @@ class RttrConan(ConanFile):
         
         if self.options.shared:
             cmake.definitions["BUILD_RTTR_DYNAMIC"] = "ON"
-            if not self.settings.os == "Macos":
-                #can't get unit tests to run in OSX Travis CI, some kind of dylib path error
-                cmake.definitions["BUILD_UNIT_TESTS"] = "ON"
             cmake.definitions["BUILD_STATIC"] = "OFF"
         else:
             cmake.definitions["BUILD_STATIC"] = "ON"
-            #note unit tests cannot be run against static build
-            cmake.definitions["BUILD_UNIT_TESTS"] = "OFF"
             cmake.definitions["BUILD_RTTR_DYNAMIC"] = "OFF"
 
         sf = os.path.join(self.source_folder,"rttr-%s" % self.version)
